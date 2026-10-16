@@ -14,7 +14,7 @@ interface Cell {
 
 /**
  * Full-screen ruled grid with the RATNA logo on the centre cells; every other
- * cell is left blank and turns over to black under the mouse.
+ * cell is left blank and turns over to light blue under the mouse.
  *
  * Purely decorative (`aria-hidden`): the page provides the accessible name.
  */

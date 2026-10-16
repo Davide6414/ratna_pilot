@@ -9,7 +9,7 @@ export const FLIP_MS = 420;
  *
  * Plain `:hover` would reverse a cell the instant the pointer leaves it, so a
  * quick sweep only made cells twitch. Here a cell always finishes turning to
- * black before it turns back, which leaves a trail behind the mouse.
+ * its hover colour before it turns back, which leaves a trail behind the mouse.
  * Touch is ignored: there is no "leave" to turn the cell back.
  */
 export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {

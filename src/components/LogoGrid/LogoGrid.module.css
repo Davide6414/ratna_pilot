@@ -35,11 +35,11 @@
   background: var(--color-paper);
 }
 
-/* ---- Hover: blank cells turn over to black, and back (see useFlipOnHover) ---- */
+/* ---- Hover: blank cells turn over to light blue, and back (see useFlipOnHover) ---- */
 
 /*
  * The cell is a card (::before) turning half a turn in front of the dark grid
- * background. A plain colour needs a single face: it swaps to black at the
+ * background. A plain colour needs a single face: it swaps colour at the
  * halfway point, when the card is edge-on; the easing is symmetric so that is
  * exactly half the duration. The z-index keeps the turning card above its
  * neighbours until it is flat again.
