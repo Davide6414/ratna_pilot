@@ -39,37 +39,9 @@
 
 .logoTile {
   position: relative;
-  z-index: 1; /* the extruded faces may overlap the neighbouring cells */
   perspective: calc(var(--cell) * 4);
   color: var(--color-brand);
   --glyph-backdrop: var(--color-paper-bright);
-}
-
-/* No mouse to look around with: the blocks slowly turn on their own. */
-@media (hover: none) and (prefers-reduced-motion: no-preference) {
-  .logoTile {
-    animation: depth-orbit 9s ease-in-out 1.6s infinite;
-  }
-}
-
-@keyframes depth-orbit {
-  0%,
-  100% {
-    --extrude-x: 0px;
-    --extrude-y: 0px;
-  }
-  25% {
-    --extrude-x: 4px;
-    --extrude-y: 3px;
-  }
-  50% {
-    --extrude-x: 0px;
-    --extrude-y: 5px;
-  }
-  75% {
-    --extrude-x: -4px;
-    --extrude-y: 3px;
-  }
 }
 
 /* The letters turn over into place when the page loads. */

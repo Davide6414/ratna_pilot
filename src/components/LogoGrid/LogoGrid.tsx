@@ -1,11 +1,9 @@
 "use client";
 
 import { memo, useMemo, useRef, type CSSProperties } from "react";
-import { ExtrudedGlyph } from "@/components/Glyph/Glyph";
+import { Glyph } from "@/components/Glyph/Glyph";
 import { findLogoCell, LOGO_CELLS, type LogoCell } from "@/lib/glyphs/logo";
-import { usePrefersReducedMotion } from "@/lib/hooks/useMediaQuery";
 import { useGridMetrics } from "./useGridMetrics";
-import { usePointerDepth } from "./usePointerDepth";
 import styles from "./LogoGrid.module.css";
 
 interface Cell {
@@ -22,18 +20,14 @@ interface Cell {
 export function LogoGrid() {
   const rootRef = useRef<HTMLDivElement>(null);
   const pitchRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
 
   const { cols, rows } = useGridMetrics(rootRef, pitchRef);
-  const reducedMotion = usePrefersReducedMotion();
   const cells = useMemo(() => buildCells(cols, rows), [cols, rows]);
-
-  usePointerDepth(gridRef, !reducedMotion);
 
   return (
     <div ref={rootRef} className={styles.root} aria-hidden="true">
       <div ref={pitchRef} className={styles.pitch} />
-      <div ref={gridRef} className={styles.grid} style={{ "--cols": cols } as CSSProperties}>
+      <div className={styles.grid} style={{ "--cols": cols } as CSSProperties}>
         {cells.map((cell) =>
           cell.logo ? (
             <LogoTile key={cell.id} logo={cell.logo} />
@@ -52,7 +46,7 @@ const LogoTile = memo(function LogoTile({ logo }: { logo: LogoCell }) {
   return (
     <div className={`${styles.cell} ${styles.logoTile}`}>
       <div className={styles.intro} style={{ "--intro-delay": `${delay}ms` } as CSSProperties}>
-        <ExtrudedGlyph shape={logo.shape} />
+        <Glyph shape={logo.shape} />
       </div>
     </div>
   );

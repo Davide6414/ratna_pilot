@@ -8,8 +8,8 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
 
 - **Griglia:** riempie lo schermo. Le celle sono vuote e bianche, il logo occupa le celle
   centrali (la N sta sempre sulla cella centrale).
-- **Logo in 3D:** le lettere del logo sono blocchi in rilievo. Col mouse si vedono i lati,
-  su touch ruotano lentamente da sole, all'apertura entrano girando una dopo l'altra.
+- **Logo:** piatto, come nel file originale. All'apertura le lettere entrano girando una
+  dopo l'altra.
 - **Responsive:** la dimensione delle celle si adatta allo schermo (circa 5 colonne su
   telefono). Con _riduci movimento_ attivo le animazioni sono disattivate.
 
@@ -17,7 +17,7 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
 
 - [Next.js](https://nextjs.org) 16 (App Router) + React 19 + TypeScript
 - CSS Modules e variabili CSS, senza librerie UI
-- 3D leggero solo in CSS (nessun WebGL): livelli SVG sovrapposti e `perspective`
+- Animazioni solo in CSS, nessuna libreria
 
 ## Sviluppo
 
@@ -37,8 +37,8 @@ npm run preview    # serve ./out in locale
 src/
   app/                    route (App Router): layout, home, 404, favicon
   components/
-    LogoGrid/             la griglia a tutto schermo con il logo estruso
-    Glyph/                rendering SVG di una lettera (anche versione estrusa)
+    LogoGrid/             la griglia a tutto schermo con il logo
+    Glyph/                rendering SVG di una lettera
     Specimen/             riga statica di lettere (pagina 404)
   config/site.ts          testi e metadati del sito (da modificare qui)
   lib/glyphs/             geometria del logo e dell'alfabeto (celle 100 × 100)
@@ -54,7 +54,8 @@ Ogni push su `main` esegue `.github/workflows/deploy.yml`: controlli, build stat
 pubblicazione su GitHub Pages. Sulle pull request gira solo la build di verifica.
 
 Configurazione da fare una sola volta: **Settings → Pages → Build and deployment → Source:
-GitHub Actions**.
+GitHub Actions**. Con "Deploy from a branch" GitHub pubblica anche il README a ogni push: il
+workflow ripubblica comunque il sito subito dopo, ma per qualche secondo si vede il README.
 
 Il workflow passa il base path (`/ratna_pilot`) e l'URL del sito tramite `PAGES_BASE_PATH` e
 `SITE_URL`. Con un dominio personalizzato il base path diventa vuoto da solo.
