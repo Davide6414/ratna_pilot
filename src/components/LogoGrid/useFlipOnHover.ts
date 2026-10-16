@@ -4,8 +4,12 @@ import { useEffect, type RefObject } from "react";
 export const FLIP_MS = 420;
 
 /**
- * Turns `[data-blank]` cells over while the mouse is on them, by toggling
- * `data-flipped` (the animation itself is CSS).
+ * Turns `[data-blank]` cells over while the mouse is on them (the animation
+ * itself is CSS). Two attributes per cell:
+ * - `data-flipped`: the card turns to its hover colour;
+ * - `data-open`: the cell shows the sea behind the card. It is set with
+ *   `data-flipped` and cleared once the card has turned back flat, so the
+ *   sea stays visible for the whole way back (and only then).
  *
  * Plain `:hover` would reverse a cell the instant the pointer leaves it, so a
  * quick sweep only made cells twitch. Here a cell always finishes turning to
@@ -21,6 +25,17 @@ export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
     const flippedAt = new WeakMap<HTMLElement, number>();
     const pending = new Map<HTMLElement, number>();
 
+    const later = (cell: HTMLElement, delay: number, run: () => void) => {
+      window.clearTimeout(pending.get(cell));
+      pending.set(
+        cell,
+        window.setTimeout(() => {
+          pending.delete(cell);
+          run();
+        }, delay),
+      );
+    };
+
     const onOver = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const cell = blankCell(event.target);
@@ -29,22 +44,20 @@ export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
       pending.delete(cell);
       if (!("flipped" in cell.dataset)) {
         cell.dataset.flipped = "";
+        cell.dataset.open = "";
         flippedAt.set(cell, performance.now());
       }
     };
 
     const onOut = (event: PointerEvent) => {
       const cell = blankCell(event.target);
-      if (!cell || cell.contains(event.relatedTarget as Node | null)) return;
+      if (!cell || !("flipped" in cell.dataset)) return;
+      if (cell.contains(event.relatedTarget as Node | null)) return;
       const elapsed = performance.now() - (flippedAt.get(cell) ?? 0);
-      const timer = window.setTimeout(
-        () => {
-          pending.delete(cell);
-          delete cell.dataset.flipped;
-        },
-        Math.max(0, FLIP_MS - elapsed),
-      );
-      pending.set(cell, timer);
+      later(cell, Math.max(0, FLIP_MS - elapsed), () => {
+        delete cell.dataset.flipped;
+        later(cell, FLIP_MS, () => delete cell.dataset.open);
+      });
     };
 
     grid.addEventListener("pointerover", onOver);

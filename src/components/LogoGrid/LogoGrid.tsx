@@ -29,6 +29,7 @@ export function LogoGrid() {
 
   return (
     <div ref={rootRef} className={styles.root} aria-hidden="true">
+      <div className={styles.sea} />
       <div ref={pitchRef} className={styles.pitch} />
       <div
         ref={gridRef}

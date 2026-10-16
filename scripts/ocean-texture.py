@@ -82,8 +82,9 @@ def main():
 
     # Large, slow variations of depth so the surface is not flat.
     depth = 0.5 + 0.5 * periodic_noise(u, v, rng, terms=4, max_freq=2)
-    base = DEEP + (MID - DEEP) * depth[..., None] * 0.8
-    rgb = base + (LIGHT - base) * (light[..., None] * 0.55)
+    base = DEEP + (MID - DEEP) * depth[..., None] * 0.45
+    # Low contrast on purpose: the water is a backdrop, not a picture.
+    rgb = base + (LIGHT - base) * (light[..., None] * 0.22)
 
     tile = Image.fromarray((np.clip(rgb, 0, 1) * 255).astype(np.uint8))
     # Blur on a 3 × 3 mosaic and keep the centre, so the blur wraps around too.

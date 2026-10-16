@@ -13,8 +13,8 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
 - **Hover:** passando col mouse su una cella vuota, la cella si gira e diventa azzurra; quando
   il mouse esce torna bianca. Ogni cella completa sempre il giro, così muovendo il mouse resta
   una scia. Le celle tagliate dal bordo dello schermo restano ferme. Disattivato su touch.
-- **Mare:** sotto la griglia c'è una texture d'acqua (caustiche), visibile solo dentro le celle
-  mentre girano. È generata da `scripts/ocean-texture.py` (Python con numpy e Pillow): si può
+- **Mare:** sotto la griglia c'è acqua in movimento (caustiche a basso contrasto), visibile
+  solo dentro le celle mentre girano; l'animazione si ferma quando nessuna cella è aperta. È generata da `scripts/ocean-texture.py` (Python con numpy e Pillow): si può
   rigenerare cambiando colori o densità.
 - **Responsive:** la dimensione delle celle si adatta allo schermo (circa 5 colonne su
   telefono). Con _riduci movimento_ attivo le animazioni sono disattivate.
