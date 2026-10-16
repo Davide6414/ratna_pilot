@@ -1,0 +1,30 @@
+.specimen {
+  --size: 120px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--size));
+  justify-content: center;
+  /* Each cell's 1px ring fills the gap, giving single 1px rules without a backdrop. */
+  gap: 1px;
+  padding: 1px;
+  list-style: none;
+}
+
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--color-paper);
+  box-shadow: 0 0 0 1px var(--color-line);
+  color: var(--color-brand);
+}
+
+.label {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}

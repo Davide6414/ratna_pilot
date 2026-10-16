@@ -1,0 +1,67 @@
+:root {
+  /* Brand palette, sampled from the master logo artwork. */
+  --color-paper: #f4f4f6;
+  --color-paper-bright: #ffffff;
+  --color-line: #13252d;
+  --color-brand: #4473c5;
+  --color-brand-side: #2d5294;
+  /* Letters of the non-logo cells: white on paper, like the counters of the N. */
+  --color-muted: #ffffff;
+  --color-ink: #13252d;
+
+  --font-sans: var(--font-grotesk), system-ui, sans-serif;
+
+  color-scheme: light;
+}
+
+/* Registered so they can be animated (see the extruded logo glyphs). */
+@property --extrude-x {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --extrude-y {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

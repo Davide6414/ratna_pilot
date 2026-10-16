@@ -1,0 +1,199 @@
+.root {
+  /* One cell: ~5 across on phones, ~6–7 rows on desktop. */
+  --cell: clamp(56px, min(20vw, 16svh), 200px);
+  --line: 1px;
+  --flap: 170ms;
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+/* Invisible ruler: lets JS read the cell pitch resolved by CSS. */
+.pitch {
+  position: absolute;
+  width: calc(var(--cell) + var(--line));
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* The grid lines are the grid's own background showing through the gaps. */
+.grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--line);
+  background: var(--color-line);
+}
+
+/* ---- Tile -------------------------------------------------------------- */
+
+.tile {
+  position: relative;
+  background: var(--color-paper);
+  perspective: calc(var(--cell) * 4);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.face,
+.half {
+  position: absolute;
+  inset: 0;
+}
+
+.face {
+  transition: color 900ms ease;
+}
+
+.tile [data-tone="muted"] {
+  color: var(--color-muted);
+}
+
+.tile [data-tone="accent"] {
+  color: var(--color-brand);
+}
+
+.logoTile {
+  z-index: 1; /* the extruded faces may overlap the neighbouring cells */
+  color: var(--color-brand);
+  --glyph-backdrop: var(--color-paper-bright);
+}
+
+/* No mouse to look around with: the blocks slowly turn on their own. */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .logoTile {
+    animation: depth-orbit 9s ease-in-out 1.6s infinite;
+  }
+}
+
+@keyframes depth-orbit {
+  0%,
+  100% {
+    --extrude-x: 0px;
+    --extrude-y: 0px;
+  }
+  25% {
+    --extrude-x: 4px;
+    --extrude-y: 3px;
+  }
+  50% {
+    --extrude-x: 0px;
+    --extrude-y: 5px;
+  }
+  75% {
+    --extrude-x: -4px;
+    --extrude-y: 3px;
+  }
+}
+
+/* Tiles turn over one after the other when the page loads. */
+.intro {
+  transform-origin: 50% 0;
+  animation: tile-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--intro-delay, 0ms) both;
+}
+
+@keyframes tile-in {
+  from {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ---- Split-flap -------------------------------------------------------- */
+
+.flip {
+  position: absolute;
+  inset: 0;
+}
+
+.half {
+  background: var(--color-paper);
+  backface-visibility: hidden;
+}
+
+.top,
+.flapTop {
+  clip-path: inset(0 0 50% 0);
+}
+
+.bottom,
+.flapBottom {
+  clip-path: inset(50% 0 0 0);
+}
+
+.flapTop {
+  animation: flap-top var(--flap) ease-in both;
+}
+
+.flapBottom {
+  animation: flap-bottom var(--flap) cubic-bezier(0.3, 1.4, 0.6, 1) var(--flap) both;
+}
+
+/* A touch of shading sells the rotation. */
+.flapTop::after,
+.flapBottom::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-line);
+  opacity: 0;
+}
+
+.flapTop::after {
+  animation: shade-in var(--flap) ease-in both;
+}
+
+.flapBottom::after {
+  animation: shade-out var(--flap) ease-out var(--flap) both;
+}
+
+@keyframes flap-top {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flap-bottom {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes shade-in {
+  to {
+    opacity: 0.07;
+  }
+}
+
+@keyframes shade-out {
+  from {
+    opacity: 0.07;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .flapTop,
+  .flapBottom,
+  .flapTop::after,
+  .flapBottom::after {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
