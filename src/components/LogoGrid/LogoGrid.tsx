@@ -3,6 +3,7 @@
 import { memo, useMemo, useRef, type CSSProperties } from "react";
 import { Glyph } from "@/components/Glyph/Glyph";
 import { findLogoCell, LOGO_CELLS, type LogoCell } from "@/lib/glyphs/logo";
+import { FLIP_MS, useFlipOnHover } from "./useFlipOnHover";
 import { useGridMetrics } from "./useGridMetrics";
 import styles from "./LogoGrid.module.css";
 
@@ -13,26 +14,32 @@ interface Cell {
 
 /**
  * Full-screen ruled grid with the RATNA logo on the centre cells; every other
- * cell is left blank.
+ * cell is left blank and turns over to black under the mouse.
  *
  * Purely decorative (`aria-hidden`): the page provides the accessible name.
  */
 export function LogoGrid() {
   const rootRef = useRef<HTMLDivElement>(null);
   const pitchRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const { cols, rows } = useGridMetrics(rootRef, pitchRef);
   const cells = useMemo(() => buildCells(cols, rows), [cols, rows]);
+  useFlipOnHover(gridRef);
 
   return (
     <div ref={rootRef} className={styles.root} aria-hidden="true">
       <div ref={pitchRef} className={styles.pitch} />
-      <div className={styles.grid} style={{ "--cols": cols } as CSSProperties}>
+      <div
+        ref={gridRef}
+        className={styles.grid}
+        style={{ "--cols": cols, "--flip": `${FLIP_MS}ms` } as CSSProperties}
+      >
         {cells.map((cell) =>
           cell.logo ? (
             <LogoTile key={cell.id} logo={cell.logo} />
           ) : (
-            <div key={cell.id} className={styles.cell} />
+            <div key={cell.id} className={`${styles.cell} ${styles.blank}`} data-blank />
           ),
         )}
       </div>

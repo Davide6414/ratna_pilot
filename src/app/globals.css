@@ -5,6 +5,7 @@
   --color-line: #13252d;
   --color-brand: #4473c5;
   --color-ink: #13252d;
+  --color-cell-hover: #000000;
 
   --font-sans: var(--font-grotesk), system-ui, sans-serif;
 

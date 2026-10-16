@@ -10,6 +10,9 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
   centrali (la N sta sempre sulla cella centrale).
 - **Logo:** piatto, come nel file originale. All'apertura le lettere entrano girando una
   dopo l'altra.
+- **Hover:** passando col mouse su una cella vuota, la cella si gira e diventa nera; quando
+  il mouse esce torna bianca. Ogni cella completa sempre il giro, così muovendo il mouse resta
+  una scia. Disattivato su touch.
 - **Responsive:** la dimensione delle celle si adatta allo schermo (circa 5 colonne su
   telefono). Con _riduci movimento_ attivo le animazioni sono disattivate.
 
@@ -54,8 +57,8 @@ Ogni push su `main` esegue `.github/workflows/deploy.yml`: controlli, build stat
 pubblicazione su GitHub Pages. Sulle pull request gira solo la build di verifica.
 
 Configurazione da fare una sola volta: **Settings → Pages → Build and deployment → Source:
-GitHub Actions**. Con "Deploy from a branch" GitHub pubblica anche il README a ogni push: il
-workflow ripubblica comunque il sito subito dopo, ma per qualche secondo si vede il README.
+GitHub Actions**. Con "Deploy from a branch" GitHub pubblicherebbe anche il README a ogni
+push (il workflow lo segnala con un avviso).
 
 Il workflow passa il base path (`/ratna_pilot`) e l'URL del sito tramite `PAGES_BASE_PATH` e
 `SITE_URL`. Con un dominio personalizzato il base path diventa vuoto da solo.
