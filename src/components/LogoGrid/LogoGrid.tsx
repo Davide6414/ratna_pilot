@@ -3,7 +3,7 @@
 import { memo, useMemo, useRef, type CSSProperties } from "react";
 import { Glyph } from "@/components/Glyph/Glyph";
 import { findLogoCell, LOGO_CELLS, type LogoCell } from "@/lib/glyphs/logo";
-import { FLIP_MS, useFlipOnHover } from "./useFlipOnHover";
+import { flipTimings, useFlipOnHover } from "./useFlipOnHover";
 import { useGridMetrics } from "./useGridMetrics";
 import styles from "./LogoGrid.module.css";
 
@@ -14,7 +14,7 @@ interface Cell {
 
 /**
  * Full-screen ruled grid with the RATNA logo on the centre cells; every other
- * cell is left blank and turns over to light blue under the mouse.
+ * cell is left blank and turns over under the mouse (see useFlipOnHover).
  *
  * Purely decorative (`aria-hidden`): the page provides the accessible name.
  */
@@ -33,7 +33,7 @@ export function LogoGrid() {
       <div
         ref={gridRef}
         className={styles.grid}
-        style={{ "--cols": cols, "--flip": `${FLIP_MS}ms` } as CSSProperties}
+        style={{ "--cols": cols, ...flipTimings } as CSSProperties}
       >
         {cells.map((cell) =>
           cell.logo ? (
