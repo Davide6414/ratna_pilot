@@ -1,71 +1,49 @@
-import { useEffect, type CSSProperties, type RefObject } from "react";
+import { useEffect, type RefObject } from "react";
+
+/** Duration of one half-turn of a cell. Exposed to CSS as `--flip`. */
+export const FLIP_MS = 420;
 
 /**
- * Timings of the hover flip. CSS reads them from the custom properties below
- * (see `flipTimings`), so this file is the single place to tune them.
- */
-const PEEK_MS = 200; // passing over a cell: it tilts part of the way
-const DWELL_MS = 320; // staying on it this long completes the flip
-const FULL_MS = 380; // from the tilt to fully turned
-const BACK_MS = 320; // back to flat once the mouse has left
-
-export const flipTimings = {
-  "--flip-peek": `${PEEK_MS}ms`,
-  "--flip-full": `${FULL_MS}ms`,
-  "--flip-back": `${BACK_MS}ms`,
-} as CSSProperties;
-
-type FlipState = "peek" | "full" | "back";
-
-/**
- * Turns `[data-blank]` cells under the mouse by setting `data-flip`:
- * - `peek`: the mouse is passing over the cell, which tilts part of the way;
- * - `full`: the mouse stayed on it, the cell turns all the way to light blue;
- * - `back`: the mouse left, the cell turns back to flat (then the attribute
- *   is removed, so idle cells carry no transform at all).
+ * Turns `[data-blank]` cells over while the mouse is on them, by toggling
+ * `data-flipped` (the animation itself is CSS).
  *
- * A cell always reaches its tilt before turning back, so even a quick sweep
- * leaves a visible ripple. Touch is ignored: there is no "leave" on touch.
+ * Plain `:hover` would reverse a cell the instant the pointer leaves it, so a
+ * quick sweep only made cells twitch. Here a cell always finishes turning to
+ * its hover colour before it turns back, which leaves a trail behind the mouse.
+ * Touch is ignored: there is no "leave" to turn the cell back.
  */
 export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
 
-    const enteredAt = new WeakMap<HTMLElement, number>();
-    const timers = new Map<HTMLElement, number>();
-
-    const schedule = (cell: HTMLElement, delay: number, run: () => void) => {
-      window.clearTimeout(timers.get(cell));
-      timers.set(
-        cell,
-        window.setTimeout(() => {
-          timers.delete(cell);
-          run();
-        }, delay),
-      );
-    };
-    const setState = (cell: HTMLElement, state: FlipState) => {
-      cell.dataset.flip = state;
-    };
+    const flippedAt = new WeakMap<HTMLElement, number>();
+    const pending = new Map<HTMLElement, number>();
 
     const onOver = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const cell = blankCell(event.target);
-      if (!cell || cell.contains(event.relatedTarget as Node | null)) return;
-      enteredAt.set(cell, performance.now());
-      setState(cell, "peek");
-      schedule(cell, DWELL_MS, () => setState(cell, "full"));
+      if (!cell) return;
+      window.clearTimeout(pending.get(cell));
+      pending.delete(cell);
+      if (!("flipped" in cell.dataset)) {
+        cell.dataset.flipped = "";
+        flippedAt.set(cell, performance.now());
+      }
     };
 
     const onOut = (event: PointerEvent) => {
       const cell = blankCell(event.target);
       if (!cell || cell.contains(event.relatedTarget as Node | null)) return;
-      const elapsed = performance.now() - (enteredAt.get(cell) ?? 0);
-      schedule(cell, Math.max(0, PEEK_MS - elapsed), () => {
-        setState(cell, "back");
-        schedule(cell, BACK_MS, () => delete cell.dataset.flip);
-      });
+      const elapsed = performance.now() - (flippedAt.get(cell) ?? 0);
+      const timer = window.setTimeout(
+        () => {
+          pending.delete(cell);
+          delete cell.dataset.flipped;
+        },
+        Math.max(0, FLIP_MS - elapsed),
+      );
+      pending.set(cell, timer);
     };
 
     grid.addEventListener("pointerover", onOver);
@@ -73,7 +51,7 @@ export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
     return () => {
       grid.removeEventListener("pointerover", onOver);
       grid.removeEventListener("pointerout", onOut);
-      timers.forEach((timer) => window.clearTimeout(timer));
+      pending.forEach((timer) => window.clearTimeout(timer));
     };
   }, [gridRef]);
 }

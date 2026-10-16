@@ -10,10 +10,11 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
   centrali (la N sta sempre sulla cella centrale).
 - **Logo:** piatto, come nel file originale. All'apertura le lettere entrano girando una
   dopo l'altra.
-- **Hover:** passando col mouse su una cella vuota, la cella si inclina in parte e torna
-  indietro; se il mouse resta sopra, il giro si completa e la cella diventa azzurra. Quando il
-  mouse esce torna bianca. Tempi in `src/components/LogoGrid/useFlipOnHover.ts`. Disattivato su
-  touch.
+- **Hover:** passando col mouse su una cella vuota, la cella si gira e diventa azzurra; quando
+  il mouse esce torna bianca. Ogni cella completa sempre il giro, così muovendo il mouse resta
+  una scia. Disattivato su touch.
+- **Responsive:** la dimensione delle celle si adatta allo schermo (circa 5 colonne su
+  telefono). Con _riduci movimento_ attivo le animazioni sono disattivate.
 
 ## Stack
 

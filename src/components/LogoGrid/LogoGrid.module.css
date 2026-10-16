@@ -35,71 +35,48 @@
   background: var(--color-paper);
 }
 
-/* ---- Hover flip (states are set by useFlipOnHover) ------------------------- */
-
-/* Registered so it can be transitioned, and used both for the rotation and the colour. */
-@property --flip-angle {
-  syntax: "<angle>";
-  inherits: true;
-  initial-value: 0deg;
-}
-
-/* The card (::before) turns in front of the dark grid background. */
-.blank {
-  position: relative;
-  background: var(--color-line);
-  perspective: calc(var(--cell) * 5);
-}
+/* ---- Hover: blank cells turn over to light blue, and back (see useFlipOnHover) ---- */
 
 /*
- * One face is enough for a plain colour: white while the card faces us,
- * light blue once it is past edge-on. The mix weight is 0% while cos(angle)
- * is positive and jumps to 100% as soon as it turns negative, so the colour
- * is always right, whatever angle an interrupted flip is at.
+ * The cell is a card (::before) turning half a turn in front of the dark grid
+ * background. A plain colour needs a single face: it swaps colour at the
+ * halfway point, when the card is edge-on; the easing is symmetric so that is
+ * exactly half the duration. The z-index keeps the turning card above its
+ * neighbours until it is flat again.
  */
+.blank {
+  position: relative;
+  z-index: 0;
+  background: var(--color-line);
+  perspective: calc(var(--cell) * 5);
+  transition: z-index 0s linear var(--flip);
+}
+
 .blank::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: color-mix(
-    in srgb,
-    var(--color-cell-hover) clamp(0%, cos(var(--flip-angle)) * -1e6%, 100%),
-    var(--color-paper)
-  );
+  background: var(--color-paper);
+  transition:
+    transform var(--flip) cubic-bezier(0.45, 0, 0.55, 1),
+    background-color 0s linear calc(var(--flip) / 2);
 }
 
-/* Only cells being flipped carry a transform; idle cells stay plain boxes. */
-.blank[data-flip] {
+.blank[data-flipped] {
   z-index: 1;
+  transition: z-index 0s;
 }
 
-.blank[data-flip]::before {
-  transform: rotateY(var(--flip-angle));
+.blank[data-flipped]::before {
+  background: var(--color-cell-hover);
+  transform: rotateY(180deg);
 }
 
-.blank[data-flip="peek"] {
-  --flip-angle: 55deg;
-  transition: --flip-angle var(--flip-peek) cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-
-.blank[data-flip="full"] {
-  --flip-angle: 180deg;
-  transition: --flip-angle var(--flip-full) cubic-bezier(0.45, 0, 0.55, 1);
-}
-
-.blank[data-flip="back"] {
-  --flip-angle: 0deg;
-  transition: --flip-angle var(--flip-back) cubic-bezier(0.3, 0, 0.3, 1);
-}
-
-/* No rotation: the colour still changes when the mouse stays on a cell. */
 @media (prefers-reduced-motion: reduce) {
-  .blank[data-flip] {
-    transition-duration: 0s;
-  }
-
-  .blank[data-flip]::before {
+  .blank::before,
+  .blank[data-flipped]::before {
     transform: none;
+    transition: none;
   }
 }
 
