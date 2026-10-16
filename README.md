@@ -12,7 +12,7 @@ Landing page di RATNA: una griglia a tutto schermo, bianca, con il logo al centr
   dopo l'altra.
 - **Hover:** passando col mouse su una cella vuota, la cella si gira e diventa azzurra; quando
   il mouse esce torna bianca. Ogni cella completa sempre il giro, così muovendo il mouse resta
-  una scia. Disattivato su touch.
+  una scia. Le celle tagliate dal bordo dello schermo restano ferme. Disattivato su touch.
 - **Responsive:** la dimensione delle celle si adatta allo schermo (circa 5 colonne su
   telefono). Con _riduci movimento_ attivo le animazioni sono disattivate.
 

@@ -10,7 +10,8 @@ export const FLIP_MS = 420;
  * Plain `:hover` would reverse a cell the instant the pointer leaves it, so a
  * quick sweep only made cells twitch. Here a cell always finishes turning to
  * its hover colour before it turns back, which leaves a trail behind the mouse.
- * Touch is ignored: there is no "leave" to turn the cell back.
+ * Cells cut by the edge of the screen stay still. Touch is ignored: there is
+ * no "leave" to turn the cell back.
  */
 export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -23,7 +24,7 @@ export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
     const onOver = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const cell = blankCell(event.target);
-      if (!cell) return;
+      if (!cell || !isFullyOnScreen(cell)) return;
       window.clearTimeout(pending.get(cell));
       pending.delete(cell);
       if (!("flipped" in cell.dataset)) {
@@ -58,4 +59,17 @@ export function useFlipOnHover(gridRef: RefObject<HTMLElement | null>) {
 
 function blankCell(target: EventTarget | null): HTMLElement | null {
   return target instanceof Element ? target.closest<HTMLElement>("[data-blank]") : null;
+}
+
+/** Half a pixel of slack for sub-pixel layout. */
+const EDGE_TOLERANCE = 0.5;
+
+function isFullyOnScreen(element: HTMLElement): boolean {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.left >= -EDGE_TOLERANCE &&
+    rect.top >= -EDGE_TOLERANCE &&
+    rect.right <= window.innerWidth + EDGE_TOLERANCE &&
+    rect.bottom <= window.innerHeight + EDGE_TOLERANCE
+  );
 }
