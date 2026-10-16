@@ -6,12 +6,7 @@
  */
 export const site = {
   name: "RATNA",
-  description: "RATNA — a geometric alphabet, one letter per cell.",
+  description: "RATNA — website coming soon.",
   /** Absolute URL of the deployed site, injected at build time by the deploy workflow. */
   url: process.env.SITE_URL ?? "http://localhost:3000",
-  tagline: "Coming soon",
-  hints: {
-    pointer: "Hover to flip · Type to write",
-    touch: "Tap a letter to flip it",
-  },
 } as const;

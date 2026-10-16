@@ -1,0 +1,98 @@
+.root {
+  /* One cell: ~5 across on phones, ~6–7 rows on desktop. */
+  --cell: clamp(56px, min(20vw, 16svh), 200px);
+  --line: 1px;
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+/* Invisible ruler: lets JS read the cell pitch resolved by CSS. */
+.pitch {
+  position: absolute;
+  width: calc(var(--cell) + var(--line));
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* The grid lines are the grid's own background showing through the gaps. */
+.grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--line);
+  background: var(--color-line);
+}
+
+.cell {
+  background: var(--color-paper);
+}
+
+/* ---- Logo -------------------------------------------------------------- */
+
+.logoTile {
+  position: relative;
+  z-index: 1; /* the extruded faces may overlap the neighbouring cells */
+  perspective: calc(var(--cell) * 4);
+  color: var(--color-brand);
+  --glyph-backdrop: var(--color-paper-bright);
+}
+
+/* No mouse to look around with: the blocks slowly turn on their own. */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .logoTile {
+    animation: depth-orbit 9s ease-in-out 1.6s infinite;
+  }
+}
+
+@keyframes depth-orbit {
+  0%,
+  100% {
+    --extrude-x: 0px;
+    --extrude-y: 0px;
+  }
+  25% {
+    --extrude-x: 4px;
+    --extrude-y: 3px;
+  }
+  50% {
+    --extrude-x: 0px;
+    --extrude-y: 5px;
+  }
+  75% {
+    --extrude-x: -4px;
+    --extrude-y: 3px;
+  }
+}
+
+/* The letters turn over into place when the page loads. */
+.intro {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 0;
+  animation: tile-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--intro-delay, 0ms) both;
+}
+
+@keyframes tile-in {
+  from {
+    transform: rotateX(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    animation: none;
+  }
+}
